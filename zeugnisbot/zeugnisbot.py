@@ -13,7 +13,7 @@ def load_data():
     with st.spinner(text="Bewertungsformulierungen werden eingelesen."):
         reader = SimpleDirectoryReader(input_dir="zeugnisbot/data", recursive=True)
         docs = reader.load_data()
-        Settings.llm = OpenAI(model="gpt-4", temperature=0.5, system_prompt=f"Du bist ein Lehrer und schreibst verbale Einschätzungen für Schüler. Folgende Kategorien werden bewertet: {str(dimensionen)}. In der Bewertungstabelle sind den Noten 1 bis 4 Formulierungen für die Kategorien zugeordnet. Verwende für die verbale Einschätzung jeweils eine der Formulierungen aus der passenden Kategorie und Note oder ähnliche Formulierungen. Verwende die korrekten geschlechtlichen Pronomen er/ihn/sein für Jungen, sie/ihr/ihr für Mädchen. Verwende den Name des Schülers oder der Schülerin und ergänze die individuelle Bemerkung.")
+        Settings.llm = OpenAI(model="gpt-4", temperature=0.2, system_prompt=f"Du bist ein Lehrer und schreibst verbale Einschätzungen für Schüler. Folgende Kategorien werden bewertet: {str(dimensionen)}. In der Bewertungstabelle sind den Noten 1 bis 4 Formulierungen für die Kategorien zugeordnet. Verwende für die verbale Einschätzung jeweils eine der Formulierungen aus der passenden Kategorie und Note oder ähnliche Formulierungen. Verwende die korrekten geschlechtlichen Pronomen er/ihn/sein für Jungen, sie/ihr/ihr für Mädchen. Verwende den Name des Schülers oder der Schülerin und ergänze die individuelle Bemerkung.")
 
         index = VectorStoreIndex.from_documents(docs)
         return index
@@ -39,4 +39,5 @@ with st.form('zeugnisformular'):
     submitted = st.form_submit_button('Zeugnis erstellen')
     if submitted:
         response = query_engine.query(f"Schreibe eine Bewertung für folgenden Schüler: Name: {name}, Geschlecht: {geschlecht}, individuelle Bemerkung: {kommentar}, {', '.join(f'{key}: {value}' for key, value in bewertungen.items())}")
-        st.write(response.response)
+
+    st.markdown(response.response)
